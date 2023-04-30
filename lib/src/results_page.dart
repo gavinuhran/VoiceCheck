@@ -17,11 +17,11 @@ class ResultsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
-            SizedBox(height: 100),
+            const SizedBox(height: 100),
             ElevatedButton(
               child: const Text('Go back to home page'),
               onPressed: () {

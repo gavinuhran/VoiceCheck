@@ -4,7 +4,7 @@ import 'navigation.dart';
 class HomePage extends StatelessWidget {
   final AppNavigator navigator;
 
-  HomePage({Key? key, required this.navigator}) : super(key: key);
+  const HomePage({Key? key, required this.navigator}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

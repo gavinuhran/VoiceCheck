@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'navigation.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   final AppNavigator navigator;
-  double frequency = 0.0;
 
-  SettingsPage({Key? key, required this.navigator}) : super(key: key);
+  const SettingsPage({Key? key, required this.navigator}) : super(key: key);
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  double frequency = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +34,11 @@ class SettingsPage extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               child: const Text('Go back to home page'),
               onPressed: () {
-                navigator.goBack();
+                widget.navigator.goBack();
               },
             ),
           ],

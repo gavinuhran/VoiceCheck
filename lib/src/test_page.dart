@@ -4,7 +4,7 @@ import 'navigation.dart';
 class TestPage extends StatelessWidget {
   final AppNavigator navigator;
 
-  TestPage({Key? key, required this.navigator}) : super(key: key);
+  const TestPage({Key? key, required this.navigator}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
