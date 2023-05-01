@@ -1,67 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'navigation.dart';
-import 'package:provider/provider.dart';
-import 'package:voice_check/src/play_audio_provider.dart';
-import 'package:voice_check/src/record_audio_provider.dart';
 import 'package:voice_check/src/record_and_play_audio.dart';
-import 'package:flutter/foundation.dart';
 
-class SliderValues extends ChangeNotifier {
-  double slider1Value = 5;
-  double slider2Value = 5;
-  double slider3Value = 5;
+class MySlider extends StatefulWidget {
+  double sliderValue;
 
-  void setSlider1Value(double value) {
-    slider1Value = value;
-    notifyListeners();
-  }
-
-  void setSlider2Value(double value) {
-    slider2Value = value;
-    notifyListeners();
-  }
-
-  void setSlider3Value(double value) {
-    slider3Value = value;
-    notifyListeners();
-  }
-}
-
-class SliderWidget extends StatelessWidget {
-  final double initialValue;
-  final Function(double) onValueChanged;
-
-  const SliderWidget(
-      {Key? key, required this.initialValue, required this.onValueChanged})
-      : super(key: key);
+  MySlider({required this.sliderValue});
 
   @override
-  Widget build(BuildContext context) {
-    final values = Provider.of<SliderValues>(context, listen: false);
+  _MySliderState createState() => _MySliderState();
+}
 
-    return Column(
-      children: [
-        Text('Select a number between 1 and 10'),
-        Consumer<SliderValues>(
-          builder: (context, sliderValues, child) {
-            return Slider(
-              value: sliderValues.slider1Value,
-              min: 1,
-              max: 10,
-              divisions: 9,
-              onChanged: onValueChanged,
-            );
-          },
-        ),
-      ],
+class _MySliderState extends State<MySlider> {
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      value: widget.sliderValue,
+      min: 1,
+      max: 10,
+      divisions: 9,
+      onChanged: (newValue) {
+        setState(() {
+          widget.sliderValue = newValue;
+        });
+      },
     );
   }
 }
 
 class TestPage extends StatefulWidget {
   final AppNavigator navigator;
-  final Function(List<double>) onSubmitted;
+  final Function() onSubmitted;
 
   TestPage({required this.navigator, required this.onSubmitted});
 
@@ -71,7 +40,6 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   final PageController controller = PageController(initialPage: 0);
-  final SliderValues values = SliderValues();
   int index = 0;
 
   final List<Widget> pages = [
@@ -101,16 +69,9 @@ class _TestPageState extends State<TestPage> {
             height: 2,
           ),
         ),
-        SizedBox(height: 60.0),
-        Consumer<SliderValues>(
-          builder: (context, sliderValues, _) {
-            return SliderWidget(
-              initialValue: sliderValues.slider1Value,
-              onValueChanged: (double value) {
-                sliderValues.slider1Value = value;
-              },
-            );
-          },
+        const SizedBox(height: 60.0),
+        MySlider(
+          sliderValue: 5.0,
         ),
       ],
     ),
@@ -124,16 +85,9 @@ class _TestPageState extends State<TestPage> {
             height: 2,
           ),
         ),
-        SizedBox(height: 60.0),
-        Consumer<SliderValues>(
-          builder: (context, sliderValues, _) {
-            return SliderWidget(
-              initialValue: sliderValues.slider2Value,
-              onValueChanged: (double value) {
-                sliderValues.slider2Value = value;
-              },
-            );
-          },
+        const SizedBox(height: 60.0),
+        MySlider(
+          sliderValue: 5.0,
         ),
       ],
     ),
@@ -147,16 +101,9 @@ class _TestPageState extends State<TestPage> {
             height: 2,
           ),
         ),
-        SizedBox(height: 60.0),
-        Consumer<SliderValues>(
-          builder: (context, sliderValues, _) {
-            return SliderWidget(
-              initialValue: sliderValues.slider3Value,
-              onValueChanged: (double value) {
-                sliderValues.slider3Value = value;
-              },
-            );
-          },
+        const SizedBox(height: 60.0),
+        MySlider(
+          sliderValue: 5.0,
         ),
       ],
     ),
@@ -209,32 +156,30 @@ class _TestPageState extends State<TestPage> {
       bottomNavigationBar: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (index > 1)
-            TextButton(
+          if (index >= 1)
+            ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop();
+                setState(() {
+                  index--;
+                });
               },
               child: const Text('Previous'),
             ),
+          if (index >= 1) const SizedBox(width: 10.0),
           if (index < pages.length - 1)
             ElevatedButton(
               onPressed: () {
-                if (index < pages.length - 1) {
-                  setState(() {
-                    index++;
-                  });
-                }
+                setState(() {
+                  index++;
+                });
               },
               child: const Text('Next'),
             ),
+          if (index == pages.length - 1) const SizedBox(width: 10.0),
           if (index == pages.length - 1)
             ElevatedButton(
               onPressed: () {
-                widget.onSubmitted([
-                  values.slider1Value,
-                  values.slider2Value,
-                  values.slider3Value,
-                ]);
+                widget.onSubmitted();
                 Navigator.of(context).pop();
               },
               child: const Text('Submit'),

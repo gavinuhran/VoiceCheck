@@ -2,6 +2,24 @@ import 'package:flutter/material.dart';
 import 'navigation.dart';
 import 'package:voice_check/src/test_page.dart';
 
+class ScoreData {
+  String date;
+  double wpm;
+  double mwpm;
+  double meanPauses;
+  double stdevPauses;
+  String intelligibility;
+
+  ScoreData({
+    required this.date,
+    required this.wpm,
+    required this.mwpm,
+    required this.meanPauses,
+    required this.stdevPauses,
+    required this.intelligibility,
+  });
+}
+
 class HomePage extends StatefulWidget {
   final AppNavigator navigator;
 
@@ -12,15 +30,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<List<String>> items = [
-    ['3/8/2023', '87'],
-    ['3/7/2023', '85'],
-    ['3/6/2023', '93'],
-  ];
+  final List<ScoreData> items = [];
+  bool isAnalyzingResult = false;
 
-  void addItem(List<double> newItem) {
+  void addItem() async {
     setState(() {
-      items.insert(0, ['5/1/2023', newItem[0].toString()]);
+      isAnalyzingResult = true;
+    });
+
+    await Future.delayed(const Duration(seconds: 5));
+
+    setState(() {
+      isAnalyzingResult = false;
+      items.insert(
+        0,
+        ScoreData(
+          date: '5/1/2023',
+          wpm: 100.0,
+          mwpm: 60.0,
+          meanPauses: 5.0,
+          stdevPauses: 1.5,
+          intelligibility: 'Fair',
+        ),
+      );
     });
   }
 
@@ -59,21 +91,26 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20.0),
+              if (isAnalyzingResult) const Text('Analyzing latest test'),
+              if (isAnalyzingResult) const SizedBox(height: 20.0),
               for (var i = 0; i < items.length; i++)
                 Column(
                   children: [
                     ListTile(
-                      title: Text('5/1/2023'),
+                      title: Text(items.elementAt(i).date),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('WPM: 100'),
-                          Text('Matched WPM: 50'),
-                          Text('Mean pauses: 40'),
-                          Text('STDev pauses: 3'),
-                          Text('Intelligibility: Fair'),
+                          Text('WPM: ${items.elementAt(i).wpm}'),
+                          Text('Matched WPM: ${items.elementAt(i).mwpm}'),
+                          Text('Mean pauses: ${items.elementAt(i).meanPauses}'),
+                          Text(
+                              'STDev pauses: ${items.elementAt(i).stdevPauses}'),
+                          Text(
+                              'Intelligibility: ${items.elementAt(i).intelligibility}'),
                         ],
                       ),
                     ),

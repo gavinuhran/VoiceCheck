@@ -18,9 +18,6 @@ class VoiceCheck extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => RecordAudioProvider()),
         ChangeNotifierProvider(create: (_) => PlayAudioProvider()),
-        ChangeNotifierProvider<SliderValues>(
-          create: (_) => SliderValues(),
-        ),
       ],
       child: MaterialApp(
         title: 'Flutter Navigator Example',
