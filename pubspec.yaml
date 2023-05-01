@@ -28,6 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  permission_handler: ^8.2.2
+  just_audio: ^0.9.29
+  record: ^3.0.3
+  fluttertoast: ^8.0.9
+  path_provider: any
+  percent_indicator: ^4.2.2
+  simple_ripple_animation: ^0.0.3
   flutter:
     sdk: flutter
 
