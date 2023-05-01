@@ -10,4 +10,8 @@ class AppNavigator {
   void goBack() {
     return navigatorKey.currentState!.pop();
   }
+
+  static NavigatorState of(BuildContext context) {
+    return Navigator.of(context);
+  }
 }
