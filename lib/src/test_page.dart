@@ -1,54 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:voice_check/src/play_audio_provider.dart';
 import 'package:voice_check/src/record_audio_provider.dart';
 import 'package:voice_check/src/record_and_play_audio.dart';
+import 'package:flutter/foundation.dart';
 
-class SliderValues {
+class SliderValues extends ChangeNotifier {
   double slider1Value = 5;
   double slider2Value = 5;
   double slider3Value = 5;
-}
 
-class SliderWidget extends StatefulWidget {
-  final double initialValue;
-  final ValueChanged<double>? onValueChanged;
-
-  const SliderWidget({
-    Key? key,
-    required this.initialValue,
-    required this.onValueChanged,
-  }) : super(key: key);
-
-  @override
-  _SliderWidgetState createState() => _SliderWidgetState();
-}
-
-class _SliderWidgetState extends State<SliderWidget> {
-  late double _value;
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.initialValue;
+  void setSlider1Value(double value) {
+    slider1Value = value;
+    notifyListeners();
   }
+
+  void setSlider2Value(double value) {
+    slider2Value = value;
+    notifyListeners();
+  }
+
+  void setSlider3Value(double value) {
+    slider3Value = value;
+    notifyListeners();
+  }
+}
+
+class SliderWidget extends StatelessWidget {
+  final double initialValue;
+  final Function(double) onValueChanged;
+
+  const SliderWidget(
+      {Key? key, required this.initialValue, required this.onValueChanged})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final values = Provider.of<SliderValues>(context, listen: false);
+
     return Column(
       children: [
         Text('Select a number between 1 and 10'),
-        Slider(
-          value: _value,
-          min: 1,
-          max: 10,
-          divisions: 9,
-          onChanged: (double value) {
-            setState(() {
-              _value = value;
-            });
-            widget.onValueChanged?.call(value);
+        Consumer<SliderValues>(
+          builder: (context, sliderValues, child) {
+            return Slider(
+              value: sliderValues.slider1Value,
+              min: 1,
+              max: 10,
+              divisions: 9,
+              onChanged: onValueChanged,
+            );
           },
         ),
       ],
@@ -58,8 +61,9 @@ class _SliderWidgetState extends State<SliderWidget> {
 
 class TestPage extends StatefulWidget {
   final AppNavigator navigator;
+  final Function(List<double>) onSubmitted;
 
-  TestPage({required this.navigator});
+  TestPage({required this.navigator, required this.onSubmitted});
 
   @override
   State<TestPage> createState() => _TestPageState();
@@ -98,9 +102,15 @@ class _TestPageState extends State<TestPage> {
           ),
         ),
         SizedBox(height: 60.0),
-        SliderWidget(
-          initialValue: 5,
-          onValueChanged: (double value) => {},
+        Consumer<SliderValues>(
+          builder: (context, sliderValues, _) {
+            return SliderWidget(
+              initialValue: sliderValues.slider1Value,
+              onValueChanged: (double value) {
+                sliderValues.slider1Value = value;
+              },
+            );
+          },
         ),
       ],
     ),
@@ -115,9 +125,15 @@ class _TestPageState extends State<TestPage> {
           ),
         ),
         SizedBox(height: 60.0),
-        SliderWidget(
-          initialValue: 5,
-          onValueChanged: (double value) => {},
+        Consumer<SliderValues>(
+          builder: (context, sliderValues, _) {
+            return SliderWidget(
+              initialValue: sliderValues.slider2Value,
+              onValueChanged: (double value) {
+                sliderValues.slider2Value = value;
+              },
+            );
+          },
         ),
       ],
     ),
@@ -132,9 +148,15 @@ class _TestPageState extends State<TestPage> {
           ),
         ),
         SizedBox(height: 60.0),
-        SliderWidget(
-          initialValue: 5,
-          onValueChanged: (double value) => {},
+        Consumer<SliderValues>(
+          builder: (context, sliderValues, _) {
+            return SliderWidget(
+              initialValue: sliderValues.slider3Value,
+              onValueChanged: (double value) {
+                sliderValues.slider3Value = value;
+              },
+            );
+          },
         ),
       ],
     ),
@@ -208,17 +230,17 @@ class _TestPageState extends State<TestPage> {
           if (index == pages.length - 1)
             ElevatedButton(
               onPressed: () {
-                _handleSubmit(context);
-                Navigator.of(context).pushNamed('/');
+                widget.onSubmitted([
+                  values.slider1Value,
+                  values.slider2Value,
+                  values.slider3Value,
+                ]);
+                Navigator.of(context).pop();
               },
               child: const Text('Submit'),
             ),
         ],
       ),
     );
-  }
-
-  void _handleSubmit(BuildContext context) {
-    // Do something with values from the slider class
   }
 }

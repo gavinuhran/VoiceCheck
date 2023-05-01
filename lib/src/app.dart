@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'navigation.dart';
 import 'home_page.dart';
-import 'test_page.dart';
 import 'settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:voice_check/src/play_audio_provider.dart';
 import 'package:voice_check/src/record_audio_provider.dart';
+import 'package:voice_check/src/test_page.dart';
 
 class VoiceCheck extends StatelessWidget {
   VoiceCheck({super.key});
@@ -18,13 +18,15 @@ class VoiceCheck extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => RecordAudioProvider()),
         ChangeNotifierProvider(create: (_) => PlayAudioProvider()),
+        ChangeNotifierProvider<SliderValues>(
+          create: (_) => SliderValues(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Navigator Example',
         navigatorKey: navigator.navigatorKey,
         routes: {
           '/': (BuildContext context) => HomePage(navigator: navigator),
-          '/test': (BuildContext context) => TestPage(navigator: navigator),
           '/settings': (BuildContext context) =>
               SettingsPage(navigator: navigator),
         },

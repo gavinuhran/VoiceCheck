@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'navigation.dart';
+import 'package:voice_check/src/test_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final AppNavigator navigator;
+
+  HomePage({Key? key, required this.navigator}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final List<List<String>> items = [
     ['3/8/2023', '87'],
     ['3/7/2023', '85'],
     ['3/6/2023', '93'],
-    ['3/5/2023', '88'],
-    ['3/4/2023', '79'],
-    ['3/3/2023', '85'],
-    ['3/8/2023', '87'],
-    ['3/7/2023', '85'],
-    ['3/6/2023', '93'],
-    ['3/5/2023', '88'],
-    ['3/4/2023', '79'],
-    ['3/3/2023', '85'],
-    ['3/8/2023', '87'],
-    ['3/7/2023', '85'],
-    ['3/6/2023', '93'],
-    ['3/5/2023', '88'],
-    ['3/4/2023', '79'],
-    ['3/3/2023', '85'],
-    ['3/8/2023', '87'],
-    ['3/7/2023', '85'],
-    ['3/6/2023', '93'],
-    ['3/5/2023', '88'],
-    ['3/4/2023', '79'],
-    ['3/3/2023', '85'],
   ];
 
-  HomePage({Key? key, required this.navigator}) : super(key: key);
+  void addItem(List<double> newItem) {
+    setState(() {
+      items.insert(0, ['5/1/2023', newItem[0].toString()]);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +33,14 @@ class HomePage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.connect_without_contact_rounded),
           onPressed: () {
-            navigator.navigateTo('/test');
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => TestPage(
+                  navigator: widget.navigator,
+                  onSubmitted: addItem,
+                ),
+              ),
+            );
           },
         ),
         title: const Text(
@@ -52,22 +51,38 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              navigator.navigateTo('/settings');
+              widget.navigator.navigateTo('/settings');
             },
           )
         ],
       ),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
+      body: SingleChildScrollView(
         child: Expanded(
-          child: ListView.builder(
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                title: Text('Score: ${items[index][1]}'),
-                subtitle: Text(items[index][0]),
-              );
-            },
+          child: Column(
+            children: [
+              const SizedBox(height: 20.0),
+              for (var i = 0; i < items.length; i++)
+                Column(
+                  children: [
+                    ListTile(
+                      title: Text('5/1/2023'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('WPM: 100'),
+                          Text('Matched WPM: 50'),
+                          Text('Mean pauses: 40'),
+                          Text('STDev pauses: 3'),
+                          Text('Intelligibility: Fair'),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      thickness: 1.0,
+                    ),
+                  ],
+                ),
+            ],
           ),
         ),
       ),
