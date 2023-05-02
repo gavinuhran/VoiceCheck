@@ -36,7 +36,7 @@ class RecordAudioProvider extends ChangeNotifier {
     showToast('Recording Started');
   }
 
-  stopRecording() async {
+  stopRecording(Function(String) filePathSetter) async {
     String? _audioFilePath;
 
     if (await _record.isRecording()) {
@@ -48,6 +48,7 @@ class RecordAudioProvider extends ChangeNotifier {
 
     _isRecording = false;
     _afterRecordingFilePath = _audioFilePath ?? '';
+    filePathSetter(_afterRecordingFilePath);
     notifyListeners();
   }
 }

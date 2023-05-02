@@ -14,7 +14,10 @@ import 'package:voice_check/src/record_audio_provider.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
 class RecordAndPlayScreen extends StatefulWidget {
-  const RecordAndPlayScreen({Key? key}) : super(key: key);
+  final Function(String) filePathSetter;
+
+  RecordAndPlayScreen({Key? key, required this.filePathSetter})
+      : super(key: key);
 
   @override
   State<RecordAndPlayScreen> createState() => _RecordAndPlayScreenState();
@@ -88,7 +91,8 @@ class _RecordAndPlayScreenState extends State<RecordAndPlayScreen> {
 
     if (_recordProvider.isRecording) {
       return InkWell(
-        onTap: () async => await _recordProviderWithoutListener.stopRecording(),
+        onTap: () async => await _recordProviderWithoutListener
+            .stopRecording(widget.filePathSetter),
         child: RippleAnimation(
           repeat: true,
           color: const Color(0xff4BB543),
