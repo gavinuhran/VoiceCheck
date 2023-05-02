@@ -3,9 +3,10 @@ import 'navigation.dart';
 import 'package:voice_check/src/record_and_play_audio.dart';
 
 class MySlider extends StatefulWidget {
-  double sliderValue;
+  Function() sliderGetter;
+  Function(double) sliderSetter;
 
-  MySlider({required this.sliderValue});
+  MySlider({required this.sliderGetter, required this.sliderSetter});
 
   @override
   _MySliderState createState() => _MySliderState();
@@ -15,14 +16,12 @@ class _MySliderState extends State<MySlider> {
   @override
   Widget build(BuildContext context) {
     return Slider(
-      value: widget.sliderValue,
+      value: widget.sliderGetter(),
       min: 1,
       max: 10,
       divisions: 9,
       onChanged: (newValue) {
-        setState(() {
-          widget.sliderValue = newValue;
-        });
+        widget.sliderSetter(newValue);
       },
     );
   }
@@ -30,7 +29,7 @@ class _MySliderState extends State<MySlider> {
 
 class TestPage extends StatefulWidget {
   final AppNavigator navigator;
-  final Function() onSubmitted;
+  final Function(List<double>) onSubmitted;
   final Function(String) filePathSetter;
 
   TestPage({
@@ -46,6 +45,39 @@ class TestPage extends StatefulWidget {
 class _TestPageState extends State<TestPage> {
   final PageController controller = PageController(initialPage: 0);
   int index = 0;
+  double sliderOne = 5.0;
+  double sliderTwo = 5.0;
+  double sliderThree = 5.0;
+
+  double getSliderOne() {
+    return sliderOne;
+  }
+
+  void setSliderOne(double value) {
+    setState(() {
+      sliderOne = value;
+    });
+  }
+
+  double getSliderTwo() {
+    return sliderTwo;
+  }
+
+  void setSliderTwo(double value) {
+    setState(() {
+      sliderTwo = value;
+    });
+  }
+
+  double getSliderThree() {
+    return sliderThree;
+  }
+
+  void setSliderThree(double value) {
+    setState(() {
+      sliderThree = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +112,8 @@ class _TestPageState extends State<TestPage> {
           ),
           const SizedBox(height: 60.0),
           MySlider(
-            sliderValue: 5.0,
+            sliderGetter: getSliderOne,
+            sliderSetter: setSliderOne,
           ),
         ],
       ),
@@ -96,7 +129,8 @@ class _TestPageState extends State<TestPage> {
           ),
           const SizedBox(height: 60.0),
           MySlider(
-            sliderValue: 5.0,
+            sliderGetter: getSliderTwo,
+            sliderSetter: setSliderTwo,
           ),
         ],
       ),
@@ -112,7 +146,8 @@ class _TestPageState extends State<TestPage> {
           ),
           const SizedBox(height: 60.0),
           MySlider(
-            sliderValue: 5.0,
+            sliderGetter: getSliderThree,
+            sliderSetter: setSliderThree,
           ),
         ],
       ),
@@ -186,7 +221,11 @@ class _TestPageState extends State<TestPage> {
           if (index == pages.length - 1)
             ElevatedButton(
               onPressed: () {
-                widget.onSubmitted();
+                List<double> sliderValues = [];
+                sliderValues.add(getSliderOne());
+                sliderValues.add(getSliderTwo());
+                sliderValues.add(getSliderThree());
+                widget.onSubmitted(sliderValues);
                 Navigator.of(context).pop();
               },
               child: const Text('Submit'),
