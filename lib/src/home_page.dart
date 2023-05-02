@@ -12,6 +12,9 @@ class ScoreData {
   double meanPauses;
   double stdevPauses;
   String intelligibility;
+  int you;
+  int them;
+  int overall;
 
   ScoreData({
     required this.date,
@@ -20,6 +23,9 @@ class ScoreData {
     required this.meanPauses,
     required this.stdevPauses,
     required this.intelligibility,
+    required this.you,
+    required this.them,
+    required this.overall,
   });
 }
 
@@ -74,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void addItem() async {
+  void addItem(List<double> sliderValues) async {
     setState(() {
       isAnalyzingResult = true;
     });
@@ -92,6 +98,9 @@ class _HomePageState extends State<HomePage> {
           meanPauses: results['Mean Pauses'],
           stdevPauses: results['STDev Pauses'],
           intelligibility: results['Intelligibility'],
+          you: sliderValues[0].toInt(),
+          them: sliderValues[1].toInt(),
+          overall: sliderValues[2].toInt(),
         ),
       );
     });
@@ -153,6 +162,39 @@ class _HomePageState extends State<HomePage> {
                               'STDev pauses: ${items.elementAt(i).stdevPauses}'),
                           Text(
                               'Intelligibility: ${items.elementAt(i).intelligibility}'),
+                          SizedBox(height: 10.0),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'How effective do YOU feel that your communication has been?',
+                              ),
+                              Text('Self-score: ${items.elementAt(i).you}')
+                            ],
+                          ),
+                          SizedBox(height: 10.0),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'How effective do your family and friends feel that your communication has been?',
+                              ),
+                              Text('Self-score: ${items.elementAt(i).them}')
+                            ],
+                          ),
+                          SizedBox(height: 10.0),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'To what extent is your ability to communicate vocally negatively affecting your quality of life?',
+                              ),
+                              Text('Self-score: ${items.elementAt(i).overall}')
+                            ],
+                          ),
                         ],
                       ),
                     ),
