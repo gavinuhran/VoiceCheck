@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'navigation.dart';
 import 'package:voice_check/src/test_page.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ScoreData {
   String date;
@@ -22,7 +25,6 @@ class ScoreData {
 
 class HomePage extends StatefulWidget {
   final AppNavigator navigator;
-
   HomePage({Key? key, required this.navigator}) : super(key: key);
 
   @override
@@ -32,25 +34,64 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<ScoreData> items = [];
   bool isAnalyzingResult = false;
+  String filePath = '';
+
+  Future<Map<String, dynamic>> sendAudio() async {
+    // Create a multipart request
+    var request = http.MultipartRequest(
+      'POST',
+      Uri.parse('http://10.0.2.2:5000/send-audio/'),
+    );
+
+    // Attach the audio file to the request
+    var audioFile = File(filePath);
+    var audioStream = http.ByteStream(audioFile.openRead());
+    var audioLength = await audioFile.length();
+    var audioMultipart = http.MultipartFile(
+      'file',
+      audioStream,
+      audioLength,
+      filename: audioFile.path.split('/').last,
+    );
+    request.files.add(audioMultipart);
+
+    // Send the request
+    var response = await request.send();
+
+    // Read the response as a string
+    var responseString = await response.stream.bytesToString();
+
+    // Convert the response string to JSON
+    var responseJson = jsonDecode(responseString);
+
+    // Handle the response
+    return responseJson;
+  }
+
+  void setFilePath(String path) {
+    setState(() {
+      filePath = path;
+    });
+  }
 
   void addItem() async {
     setState(() {
       isAnalyzingResult = true;
     });
 
-    await Future.delayed(const Duration(seconds: 5));
+    var results = await sendAudio();
 
     setState(() {
       isAnalyzingResult = false;
       items.insert(
         0,
         ScoreData(
-          date: '5/1/2023',
-          wpm: 100.0,
-          mwpm: 60.0,
-          meanPauses: 5.0,
-          stdevPauses: 1.5,
-          intelligibility: 'Fair',
+          date: results['date'],
+          wpm: results['WPM'],
+          mwpm: results['Matched WPM'],
+          meanPauses: results['Mean Pauses'],
+          stdevPauses: results['STDev Pauses'],
+          intelligibility: results['Intelligibility'],
         ),
       );
     });
@@ -70,6 +111,7 @@ class _HomePageState extends State<HomePage> {
                 builder: (context) => TestPage(
                   navigator: widget.navigator,
                   onSubmitted: addItem,
+                  filePathSetter: setFilePath,
                 ),
               ),
             );

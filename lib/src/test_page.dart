@@ -31,8 +31,13 @@ class _MySliderState extends State<MySlider> {
 class TestPage extends StatefulWidget {
   final AppNavigator navigator;
   final Function() onSubmitted;
+  final Function(String) filePathSetter;
 
-  TestPage({required this.navigator, required this.onSubmitted});
+  TestPage({
+    required this.navigator,
+    required this.onSubmitted,
+    required this.filePathSetter,
+  });
 
   @override
   State<TestPage> createState() => _TestPageState();
@@ -42,75 +47,77 @@ class _TestPageState extends State<TestPage> {
   final PageController controller = PageController(initialPage: 0);
   int index = 0;
 
-  final List<Widget> pages = [
-    Column(
-      children: const [
-        Expanded(
-          child: SingleChildScrollView(
-            child: Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at dictum dui, at tristique urna. Nulla feugiat pharetra vestibulum. Cras dapibus, eros a accumsan cursus, sapien nisl porta augue, id efficitur velit elit vitae ligula. Nullam ac dictum nunc. In hac habitasse platea dictumst. Donec dictum ligula vel feugiat consequat. Nam cursus non felis id aliquet. Nam consectetur scelerisque sem, id laoreet est fringilla et.',
-              style: TextStyle(
-                fontSize: 20,
-                height: 2,
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      Column(
+        children: [
+          const Expanded(
+            child: SingleChildScrollView(
+              child: Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse at dictum dui, at tristique urna. Nulla feugiat pharetra vestibulum. Cras dapibus, eros a accumsan cursus, sapien nisl porta augue, id efficitur velit elit vitae ligula. Nullam ac dictum nunc. In hac habitasse platea dictumst. Donec dictum ligula vel feugiat consequat. Nam cursus non felis id aliquet. Nam consectetur scelerisque sem, id laoreet est fringilla et.',
+                style: TextStyle(
+                  fontSize: 20,
+                  height: 2,
+                ),
               ),
             ),
           ),
-        ),
-        RecordAndPlayScreen(),
-      ],
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'How effective do YOU feel that your communication has been?',
-          style: TextStyle(
-            fontSize: 20,
-            height: 2,
+          RecordAndPlayScreen(
+            filePathSetter: widget.filePathSetter,
           ),
-        ),
-        const SizedBox(height: 60.0),
-        MySlider(
-          sliderValue: 5.0,
-        ),
-      ],
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'How effective do your family and friends feel that your communication has been?',
-          style: TextStyle(
-            fontSize: 20,
-            height: 2,
+        ],
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'How effective do YOU feel that your communication has been?',
+            style: TextStyle(
+              fontSize: 20,
+              height: 2,
+            ),
           ),
-        ),
-        const SizedBox(height: 60.0),
-        MySlider(
-          sliderValue: 5.0,
-        ),
-      ],
-    ),
-    Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'To what extent is your ability to communicate vocally negatively affecting your quality of life?',
-          style: TextStyle(
-            fontSize: 20,
-            height: 2,
+          const SizedBox(height: 60.0),
+          MySlider(
+            sliderValue: 5.0,
           ),
-        ),
-        const SizedBox(height: 60.0),
-        MySlider(
-          sliderValue: 5.0,
-        ),
-      ],
-    ),
-  ];
+        ],
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'How effective do your family and friends feel that your communication has been?',
+            style: TextStyle(
+              fontSize: 20,
+              height: 2,
+            ),
+          ),
+          const SizedBox(height: 60.0),
+          MySlider(
+            sliderValue: 5.0,
+          ),
+        ],
+      ),
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'To what extent is your ability to communicate vocally negatively affecting your quality of life?',
+            style: TextStyle(
+              fontSize: 20,
+              height: 2,
+            ),
+          ),
+          const SizedBox(height: 60.0),
+          MySlider(
+            sliderValue: 5.0,
+          ),
+        ],
+      ),
+    ];
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
